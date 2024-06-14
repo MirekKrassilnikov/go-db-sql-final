@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"errors" // Для работы с ошибками
-
 )
 
 type ParcelStore struct {

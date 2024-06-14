@@ -2,13 +2,13 @@ package main
 
 import (
 	"database/sql"
+	"github.com/google/uuid"
 	"math/rand"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-
 )
 
 var (
@@ -22,11 +22,14 @@ var (
 
 // getTestParcel возвращает тестовую посылку
 func getTestParcel() Parcel {
+	id, _ := uuid.NewRandom()
+
 	return Parcel{
 		Client:    1000,
 		Status:    ParcelStatusRegistered,
 		Address:   "test",
 		CreatedAt: time.Now().UTC().Format(time.RFC3339),
+		Number:    int(id.ID()),
 	}
 }
 
@@ -57,12 +60,11 @@ func TestAddGetDelete(t *testing.T) {
 	require.Error(t, err)
 }
 
-
 // TestSetAddress проверяет обновление адреса
 func TestSetAddress(t *testing.T) {
 	// prepare
 	db, err := sql.Open("sqlite", "tracker.db")
-		require.NoError(t, err)
+	require.NoError(t, err)
 
 	store := NewParcelStore(db)
 	parcel := getTestParcel()
@@ -83,7 +85,6 @@ func TestSetAddress(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, newAddress, p.Address)
 }
-
 
 // TestSetStatus проверяет обновление статуса
 func TestSetStatus(t *testing.T) {
@@ -113,7 +114,6 @@ func TestSetStatus(t *testing.T) {
 }
 
 // TestGetByClient проверяет получение посылок по идентификатору клиента
-
 
 func TestGetByClient(t *testing.T) {
 	// prepare
@@ -164,4 +164,3 @@ func TestGetByClient(t *testing.T) {
 		assert.Equal(t, expectedParcel, parcel)
 	}
 }
-
